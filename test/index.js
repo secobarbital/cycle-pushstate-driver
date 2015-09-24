@@ -1,6 +1,6 @@
 import test from 'tape'
 import { Rx } from '@cycle/core'
-import { makeURLDriver } from '../src'
+import { makePathDriver } from '../src'
 
 global.history = {
   pushState: () => {}
@@ -11,10 +11,10 @@ global.location = {
 global.addEventListener = () => {}
 global.removeEventListener = () => {}
 
-test('URLDriver should not duplicate input', t => {
-  let URLDriver = makeURLDriver()
+test('PathDriver should not duplicate input', t => {
+  let pathDriver = makePathDriver()
   const navigate$ = Rx.Observable.of('/', '/foo', '/bar')
-  URLDriver(navigate$)
+  pathDriver(navigate$)
     .take(3)
     .toArray()
     .subscribe(

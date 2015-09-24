@@ -1,7 +1,7 @@
 import { Rx } from '@cycle/core'
 
-export function makeURLDriver () {
-  return function URLDriver (navigate$) {
+export function makePushStateDriver () {
+  return function PushStateDriver (navigate$) {
     const pushState$ = navigate$
       .distinctUntilChanged()
     const popState$ = Rx.Observable.fromEvent(global, 'popstate')
@@ -14,4 +14,8 @@ export function makeURLDriver () {
       .startWith(location.pathname)
       .distinctUntilChanged()
   }
+}
+
+export function makePathDriver () {
+  return makePushStateDriver()
 }
