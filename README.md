@@ -61,6 +61,7 @@ function main(responses) {
  - Add tests
  - Support hash changes
  - Use cycle eslint config
+
 ### v1.x
  - Move to cycle.js org
  - Publish on npm
