@@ -26,7 +26,40 @@ const drivers = {
 Cycle.run(main, drivers)
 ```
 
-Simple and normal use case:
+Simple use case:
+
+```js
+function main(responses) {
+  let localLinkClick$ = DOM.select('a').events('click')
+    .filter(e => e.currentTarget.host === location.host)
+
+  let navigate$ = localLinkClick$
+    .map(e => e.currentTarget.href)
+
+  let vtree$ = responses.URL
+    .map(url => {
+      switch(url) {
+        case '/':
+          renderHome()
+          break
+        case '/user':
+          renderUser()
+          break
+        default:
+          render404()
+          break
+      }
+    })
+
+  return {
+    DOM: vtree$,
+    URL: navigate$,
+    preventDefault: localLinkClick$
+  };
+}
+```
+
+Routing use case:
 
 ```js
 import switchPath from 'switch-path'
