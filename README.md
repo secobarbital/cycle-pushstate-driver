@@ -1,7 +1,7 @@
 
-# Cycle URL Driver
+# Cycle Navigation Driver
 
-A [Cycle.js](http://cycle.js.org) [driver](http://cycle.js.org/drivers.html) for changing the URL, and reacting to URL changes.
+A [Cycle.js](http://cycle.js.org) [driver](http://cycle.js.org/drivers.html) for navigation.
 
 ## Install
 
@@ -13,14 +13,14 @@ Basics:
 
 ```js
 import Cycle from '@cycle/core'
-import { makeURLDriver } from 'cycle-url-driver'
+import { makeNavigationDriver } from 'cycle-url-driver'
 
 function main (responses) {
   // ...
 }
 
 const drivers = {
-  URL: makeURLDriver()
+  Navigation: makeNavigationDriver()
 }
 
 Cycle.run(main, drivers)
@@ -36,7 +36,7 @@ function main(responses) {
   let navigate$ = localLinkClick$
     .map(e => e.currentTarget.href)
 
-  let vtree$ = responses.URL
+  let vtree$ = responses.Navigation
     .map(url => {
       switch(url) {
         case '/':
@@ -53,7 +53,7 @@ function main(responses) {
 
   return {
     DOM: vtree$,
-    URL: navigate$,
+    Navigation: navigate$,
     preventDefault: localLinkClick$
   };
 }
@@ -76,13 +76,13 @@ function main(responses) {
   let navigate$ = localLinkClick$
     .map(e => e.currentTarget.href)
 
-  let vtree$ = responses.URL
+  let vtree$ = responses.Navigation
     .map(resolve)
     .map(({ value }) => value)
 
   return {
     DOM: vtree$,
-    URL: navigate$,
+    Navigation: navigate$,
     preventDefault: localLinkClick$
   };
 }
@@ -92,6 +92,7 @@ function main(responses) {
 
 ### v0.x
  - Add tests
+ - Handle errors
  - Support hash changes
  - Use cycle eslint config
 

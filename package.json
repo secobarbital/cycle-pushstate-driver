@@ -1,5 +1,5 @@
 {
-  "name": "cycle-path-driver",
+  "name": "cycle-navigation-driver",
   "version": "0.0.1",
   "description": "A Cycle.js driver for working with the current URL",
   "main": "src/index.js",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/secobarbital/cycle-path-driver.git"
+    "url": "git+https://github.com/secobarbital/cycle-navigation-driver.git"
   },
   "author": "Seggy Umboh <seg@seg.gy>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/secobarbital/cycle-path-driver/issues"
+    "url": "https://github.com/secobarbital/cycle-navigation-driver/issues"
   },
-  "homepage": "https://github.com/secobarbital/cycle-path-driver#readme",
+  "homepage": "https://github.com/secobarbital/cycle-navigation-driver#readme",
   "devDependencies": {
     "babel": "^5.8.23",
     "faucet": "0.0.1",
