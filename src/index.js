@@ -16,6 +16,6 @@ export function makePushStateDriver () {
   }
 }
 
-export function makePathDriver () {
+export function makeNavigationDriver () {
   return makePushStateDriver()
 }
