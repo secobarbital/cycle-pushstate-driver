@@ -3,6 +3,20 @@
 
 A [Cycle.js](http://cycle.js.org) [driver](http://cycle.js.org/drivers.html) for navigation.
 
+## API
+
+### ```makePushStateDriver ()```
+
+Returns a navigation driver that calls ```history.pushState``` on the input paths and outputs paths sent to ```pushState``` as well as received with ```popstate``` events, starting with the current path.
+
+### ```makeHashChangeDriver ()```
+
+Returns a navigation driver that sets ```location.hash``` to the input hashes and outputs hashes received with ```hashchange``` events, starting with the current hash.
+
+### ```makeNavigationDriver ()```
+
+Returns the pushState driver if ```history.pushState``` is available, otherwise returns the hashchange Driver.
+
 ## Install
 
 Only available via git for now. I will publish this module on npm once I have added tests.
@@ -13,7 +27,7 @@ Basics:
 
 ```js
 import Cycle from '@cycle/core'
-import { makeNavigationDriver } from 'cycle-url-driver'
+import { makeNavigationDriver } from 'cycle-navigation-driver'
 
 function main (responses) {
   // ...
