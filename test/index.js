@@ -10,7 +10,7 @@ import {
 function setupListeners () {
   global.eventListeners = []
   global.addEventListener = (key, listener) => {
-    global.eventListeners[key] = eventListeners[key] || []
+    global.eventListeners[key] = global.eventListeners[key] || []
     global.eventListeners[key].push(listener)
   }
   global.removeEventListener = sinon.spy()
@@ -110,8 +110,8 @@ test('pushStateDriver should respond to popstate', t => {
           'should emit on popstate only when it is different from previous')
       }
     )
-  t.equal(eventListeners.popstate.length, 1, 'should be listening to popstate')
-  let popstateListener = eventListeners.popstate[0]
+  t.equal(global.eventListeners.popstate.length, 1, 'should be listening to popstate')
+  let popstateListener = global.eventListeners.popstate[0]
   popstateListener({})
   global.location.pathname = '/home'
   popstateListener({})
@@ -126,10 +126,9 @@ test('makeNavigationDriver should return hashChangeDriver when pushState is not 
   navigationDriver(navigate$)
     .subscribe()
   setTimeout(() => {
-
-  t.equal(location.hash, '/home', 'hash should be set')
-  teardown(originals)
-  t.end()
+    t.equal(location.hash, '/home', 'hash should be set')
+    teardown(originals)
+    t.end()
   }, 100)
 })
 
@@ -158,8 +157,8 @@ test('hashChangeDriver should respond to hashchange', t => {
           'should emit on hashchange only when it is different from previous')
       }
     )
-  t.equal(eventListeners.hashchange.length, 1, 'should be listening to hashchange')
-  let hashchangeListener = eventListeners.hashchange[0]
+  t.equal(global.eventListeners.hashchange.length, 1, 'should be listening to hashchange')
+  let hashchangeListener = global.eventListeners.hashchange[0]
   hashchangeListener(hashchangeEvent)
   global.location.hash = '/home'
   hashchangeListener(hashchangeEvent)
