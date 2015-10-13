@@ -2,17 +2,18 @@
   "name": "cycle-navigation-driver",
   "version": "0.0.1",
   "description": "A Cycle.js driver for working with the current URL",
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "standard": "standard --global fetch --global location --global history",
     "pretest": "npm run standard",
-    "test": "babel-node test/*.js | faucet"
+    "test": "babel-node test/*.js | faucet",
+    "prepublish": "babel -d lib/ src/"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/secobarbital/cycle-navigation-driver.git"
+    "url": "https://github.com/secobarbital/cycle-navigation-driver.git"
   },
-  "author": "Seggy Umboh <seg@seg.gy>",
+  "author": "Seggy Umboh",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/secobarbital/cycle-navigation-driver/issues"
