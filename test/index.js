@@ -1,7 +1,7 @@
 import test from 'tape'
 import sinon from 'sinon'
 import { Rx } from '@cycle/core'
-import { makePushStateDriver, makeHashChangeDriver } from '../src'
+import { makePushStateDriver } from '../src'
 
 function setupListeners () {
   global.eventListeners = []
@@ -18,8 +18,7 @@ function saveOriginals () {
     location: global.location,
     addEventListener: global.addEventListener,
     removeEventListener: global.removeEventListener,
-    eventListeners: global.eventListeners,
-    onhashchange: global.onhashchange
+    eventListeners: global.eventListeners
   }
 }
 
@@ -35,24 +34,13 @@ function setupPushState () {
   return originals
 }
 
-function setupHashChange () {
-  const originals = saveOriginals()
-  global.onhashchange = sinon.spy()
-  global.location = {
-    hash: '/current'
-  }
-  setupListeners()
-  return originals
-}
-
 function teardown (originals) {
   [
     'history',
     'location',
     'addEventListener',
     'removeEventListener',
-    'eventListeners',
-    'onhashchange'
+    'eventListeners'
   ].forEach(key => {
     if (originals[key]) {
       global[key] = originals[key]
@@ -113,56 +101,6 @@ test('pushStateDriver should respond to popstate', t => {
   popstateListener({})
   global.location.pathname = '/home'
   popstateListener({})
-  teardown(originals)
-  t.end()
-})
-
-test('makeHashChangeDriver should return a function', t => {
-  const originals = setupHashChange()
-  const driver = makeHashChangeDriver()
-  t.equal(typeof driver, 'function')
-  teardown(originals)
-  t.end()
-})
-
-test('makeHashChangeDriver should return fallback if onhashchange is not available', t => {
-  const driver = makeHashChangeDriver()
-  t.equal(typeof driver, 'function')
-  t.equal(driver.name, 'noHashChangeDriver')
-  t.end()
-})
-
-test('makeHashChangeDriver should return hashChangeDriver if onhashchange is available', t => {
-  const originals = setupHashChange()
-  const driver = makeHashChangeDriver()
-  t.equal(typeof driver, 'function')
-  t.equal(driver.name, 'hashChangeDriver')
-  teardown(originals)
-  t.end()
-})
-
-test('hashChangeDriver should respond to hashchange', t => {
-  const originals = setupHashChange()
-  const driver = makeHashChangeDriver()
-  const navigate$ = Rx.Observable.empty()
-  const hashchangeEvent = { newUrl: '/home', oldUrl: '/current' }
-  const output = []
-  driver(navigate$)
-    .take(2)
-    .subscribe(
-      url => output.push(url),
-      t.error,
-      () => {
-        t.deepEqual(
-          output, ['/current', '/home'],
-          'should emit on hashchange only when it is different from previous')
-      }
-    )
-  t.equal(global.eventListeners.hashchange.length, 1, 'should be listening to hashchange')
-  const hashchangeListener = global.eventListeners.hashchange[0]
-  hashchangeListener(hashchangeEvent)
-  global.location.hash = '/home'
-  hashchangeListener(hashchangeEvent)
   teardown(originals)
   t.end()
 })
