@@ -2,15 +2,13 @@ import { Rx } from '@cycle/core'
 
 export function makePushStateDriver () {
   return function pushStateDriver (navigate$) {
-    const pushState$ = navigate$
-      .distinctUntilChanged()
     const popState$ = Rx.Observable.fromEvent(global, 'popstate')
-      .map(e => location.pathname)
+      .map(e => global.location.pathname)
 
-    pushState$
-      .subscribe(pathname => history.pushState(null, null, pathname))
+    navigate$
+      .subscribe(pathname => global.history.pushState(null, null, pathname))
 
-    return Rx.Observable.merge(pushState$, popState$)
+    return Rx.Observable.merge(navigate$, popState$)
       .startWith(location.pathname)
       .distinctUntilChanged()
   }
@@ -22,19 +20,18 @@ export function makeHashChangeDriver () {
       .map(e => e.newUrl)
 
     navigate$
-      .distinctUntilChanged()
       .subscribe(hash => {
         location.hash = hash
       })
 
     return hashChange$
-      .startWith(location.hash)
+      .startWith(global.location.hash)
       .distinctUntilChanged()
   }
 }
 
 export function makeNavigationDriver () {
-  let hasPushState = 'history' in global && 'pushState' in history
+  let hasPushState = 'history' in global && 'pushState' in global.history
   let hasHashChange = 'onhashchange' in global
   if (hasPushState) return makePushStateDriver()
   if (hasHashChange) return makeHashChangeDriver()
