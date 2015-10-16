@@ -1,11 +1,7 @@
 import test from 'tape'
 import sinon from 'sinon'
 import { Rx } from '@cycle/core'
-import {
-  makeNavigationDriver,
-  makePushStateDriver,
-  makeHashChangeDriver
-} from '../src'
+import { makePushStateDriver, makeHashChangeDriver } from '../src'
 
 function setupListeners () {
   global.eventListeners = []
@@ -28,7 +24,7 @@ function saveOriginals () {
 }
 
 function setupPushState () {
-  let originals = saveOriginals()
+  const originals = saveOriginals()
   global.history = {
     pushState: sinon.spy()
   }
@@ -40,7 +36,7 @@ function setupPushState () {
 }
 
 function setupHashChange () {
-  let originals = saveOriginals()
+  const originals = saveOriginals()
   global.onhashchange = sinon.spy()
   global.location = {
     hash: '/current'
@@ -66,40 +62,42 @@ function teardown (originals) {
   })
 }
 
-test('makeNavigationDriver should return a function', t => {
-  let originals = setupPushState()
-  let navigationDriver = makeNavigationDriver()
-  t.equal(typeof navigationDriver, 'function')
+test('makePushStateDriver should return noopDriver if pushState is not available', t => {
+  const driver = makePushStateDriver()
+  t.equal(typeof driver, 'function')
+  t.equal(driver.name, 'noopDriver')
+  t.end()
+})
+
+test('makePushStateDriver should return pushStateDriver if pushState is available', t => {
+  const originals = setupPushState()
+  const driver = makePushStateDriver()
+  t.equal(typeof driver, 'function')
+  t.equal(driver.name, 'pushStateDriver')
   teardown(originals)
   t.end()
 })
 
-test('makeNavigationDriver should return pushStateDriver when available', t => {
-  let originals = setupPushState()
-  let navigationDriver = makeNavigationDriver()
-  let navigate$ = Rx.Observable.just('/home')
-  navigationDriver(navigate$)
+test('pushStateDriver should call pushState', t => {
+  const originals = setupPushState()
+  const driver = makePushStateDriver()
+  const navigate$ = Rx.Observable.just('/home')
+  driver(navigate$)
     .subscribe()
   t.ok(
-    history.pushState.calledWith(null, null, '/home'),
+    global.history.pushState.calledWith(null, null, '/home'),
     'pushState should be called once'
   )
   teardown(originals)
   t.end()
 })
 
-test('makePushStateDriver should return a function', t => {
-  let navigationDriver = makePushStateDriver()
-  t.equal(typeof navigationDriver, 'function')
-  t.end()
-})
-
 test('pushStateDriver should respond to popstate', t => {
-  let originals = setupPushState()
-  let navigationDriver = makePushStateDriver()
-  let navigate$ = Rx.Observable.empty()
-  let output = []
-  navigationDriver(navigate$)
+  const originals = setupPushState()
+  const driver = makePushStateDriver()
+  const navigate$ = Rx.Observable.empty()
+  const output = []
+  driver(navigate$)
     .take(2)
     .subscribe(
       url => output.push(url),
@@ -111,7 +109,7 @@ test('pushStateDriver should respond to popstate', t => {
       }
     )
   t.equal(global.eventListeners.popstate.length, 1, 'should be listening to popstate')
-  let popstateListener = global.eventListeners.popstate[0]
+  const popstateListener = global.eventListeners.popstate[0]
   popstateListener({})
   global.location.pathname = '/home'
   popstateListener({})
@@ -119,34 +117,37 @@ test('pushStateDriver should respond to popstate', t => {
   t.end()
 })
 
-test('makeNavigationDriver should return hashChangeDriver when pushState is not available and onhashchange is', t => {
-  let originals = setupHashChange()
-  let navigationDriver = makeNavigationDriver()
-  let navigate$ = Rx.Observable.just('/home')
-  navigationDriver(navigate$)
-    .subscribe()
-  setTimeout(() => {
-    t.equal(location.hash, '/home', 'hash should be set')
-    teardown(originals)
-    t.end()
-  }, 100)
+test('makeHashChangeDriver should return a function', t => {
+  const originals = setupHashChange()
+  const driver = makeHashChangeDriver()
+  t.equal(typeof driver, 'function')
+  teardown(originals)
+  t.end()
 })
 
-test('makeHashChangeDriver should return a function', t => {
-  let originals = setupHashChange()
-  let navigationDriver = makeHashChangeDriver()
-  t.equal(typeof navigationDriver, 'function')
+test('makeHashChangeDriver should return noopDriver if onhashchange is not available', t => {
+  const driver = makeHashChangeDriver()
+  t.equal(typeof driver, 'function')
+  t.equal(driver.name, 'noopDriver')
+  t.end()
+})
+
+test('makeHashChangeDriver should return hashChangeDriver if onhashchange is available', t => {
+  const originals = setupHashChange()
+  const driver = makeHashChangeDriver()
+  t.equal(typeof driver, 'function')
+  t.equal(driver.name, 'hashChangeDriver')
   teardown(originals)
   t.end()
 })
 
 test('hashChangeDriver should respond to hashchange', t => {
-  let originals = setupHashChange()
-  let navigationDriver = makeHashChangeDriver()
-  let navigate$ = Rx.Observable.empty()
-  let hashchangeEvent = { newUrl: '/home', oldUrl: '/current' }
-  let output = []
-  navigationDriver(navigate$)
+  const originals = setupHashChange()
+  const driver = makeHashChangeDriver()
+  const navigate$ = Rx.Observable.empty()
+  const hashchangeEvent = { newUrl: '/home', oldUrl: '/current' }
+  const output = []
+  driver(navigate$)
     .take(2)
     .subscribe(
       url => output.push(url),
@@ -158,7 +159,7 @@ test('hashChangeDriver should respond to hashchange', t => {
       }
     )
   t.equal(global.eventListeners.hashchange.length, 1, 'should be listening to hashchange')
-  let hashchangeListener = global.eventListeners.hashchange[0]
+  const hashchangeListener = global.eventListeners.hashchange[0]
   hashchangeListener(hashchangeEvent)
   global.location.hash = '/home'
   hashchangeListener(hashchangeEvent)

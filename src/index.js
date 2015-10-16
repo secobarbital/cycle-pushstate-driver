@@ -1,39 +1,42 @@
 import { Rx } from '@cycle/core'
 
+function noopDriver (navigate$) {
+  return navigate$
+    .distinctUntilChanged()
+}
+
+function pushStateDriver (navigate$) {
+  const popState$ = Rx.Observable.fromEvent(global, 'popstate')
+    .map(e => global.location.pathname)
+
+  navigate$
+    .subscribe(path => global.history.pushState(null, null, path))
+
+  return Rx.Observable.merge(navigate$, popState$)
+    .startWith(global.location.pathname)
+    .distinctUntilChanged()
+}
+
+function hashChangeDriver (navigate$) {
+  const hashChange$ = Rx.Observable.fromEvent(global, 'hashchange')
+    .map(e => e.newUrl)
+
+  navigate$
+    .subscribe(hash => {
+      global.location.hash = hash
+    })
+
+  return hashChange$
+    .startWith(global.location.hash)
+    .distinctUntilChanged()
+}
+
 export function makePushStateDriver () {
-  return function pushStateDriver (navigate$) {
-    const popState$ = Rx.Observable.fromEvent(global, 'popstate')
-      .map(e => global.location.pathname)
-
-    navigate$
-      .subscribe(pathname => global.history.pushState(null, null, pathname))
-
-    return Rx.Observable.merge(navigate$, popState$)
-      .startWith(location.pathname)
-      .distinctUntilChanged()
-  }
+  const hasPushState = 'history' in global && 'pushState' in global.history
+  return hasPushState ? pushStateDriver : noopDriver
 }
 
 export function makeHashChangeDriver () {
-  return function hashChangeDriver (navigate$) {
-    const hashChange$ = Rx.Observable.fromEvent(global, 'hashchange')
-      .map(e => e.newUrl)
-
-    navigate$
-      .subscribe(hash => {
-        location.hash = hash
-      })
-
-    return hashChange$
-      .startWith(global.location.hash)
-      .distinctUntilChanged()
-  }
-}
-
-export function makeNavigationDriver () {
-  let hasPushState = 'history' in global && 'pushState' in global.history
-  let hasHashChange = 'onhashchange' in global
-  if (hasPushState) return makePushStateDriver()
-  if (hasHashChange) return makeHashChangeDriver()
-  throw new Error('Navigation Driver requires pushState or onhashchange')
+  const hasHashChange = 'onhashchange' in global
+  return hasHashChange ? hashChangeDriver : noopDriver
 }
