@@ -4,7 +4,7 @@
   "description": "A Cycle.js driver for working with the current URL",
   "main": "lib/index.js",
   "scripts": {
-    "standard": "standard --global fetch --global location --global history",
+    "standard": "standard src",
     "pretest": "npm run standard",
     "test": "babel-node test/*.js | faucet",
     "prepublish": "babel -d lib/ src/"
