@@ -1,8 +1,9 @@
 import { Rx } from '@cycle/core'
 
-function noopDriver (navigate$) {
-  return navigate$
-    .distinctUntilChanged()
+function noPushStateDriver (navigate$) {
+  navigate$.subscribe()
+  return Rx.Observable.never()
+    .startWith(global.location.pathname)
 }
 
 function pushStateDriver (navigate$) {
@@ -15,6 +16,12 @@ function pushStateDriver (navigate$) {
   return Rx.Observable.merge(navigate$, popState$)
     .startWith(global.location.pathname)
     .distinctUntilChanged()
+}
+
+function noHashChangeDriver (navigate$) {
+  navigate$.subscribe()
+  return Rx.Observable.never()
+    .startWith(global.location.hash)
 }
 
 function hashChangeDriver (navigate$) {
@@ -33,10 +40,10 @@ function hashChangeDriver (navigate$) {
 
 export function makePushStateDriver () {
   const hasPushState = 'history' in global && 'pushState' in global.history
-  return hasPushState ? pushStateDriver : noopDriver
+  return hasPushState ? pushStateDriver : noPushStateDriver
 }
 
 export function makeHashChangeDriver () {
   const hasHashChange = 'onhashchange' in global
-  return hasHashChange ? hashChangeDriver : noopDriver
+  return hasHashChange ? hashChangeDriver : noHashChangeDriver
 }

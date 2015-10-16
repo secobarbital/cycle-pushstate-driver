@@ -62,10 +62,10 @@ function teardown (originals) {
   })
 }
 
-test('makePushStateDriver should return noopDriver if pushState is not available', t => {
+test('makePushStateDriver should return fallback if pushState is not available', t => {
   const driver = makePushStateDriver()
   t.equal(typeof driver, 'function')
-  t.equal(driver.name, 'noopDriver')
+  t.equal(driver.name, 'noPushStateDriver')
   t.end()
 })
 
@@ -125,10 +125,10 @@ test('makeHashChangeDriver should return a function', t => {
   t.end()
 })
 
-test('makeHashChangeDriver should return noopDriver if onhashchange is not available', t => {
+test('makeHashChangeDriver should return fallback if onhashchange is not available', t => {
   const driver = makeHashChangeDriver()
   t.equal(typeof driver, 'function')
-  t.equal(driver.name, 'noopDriver')
+  t.equal(driver.name, 'noHashChangeDriver')
   t.end()
 })
 
