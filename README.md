@@ -1,21 +1,13 @@
 
-# Cycle Navigation Driver
+# Cycle PushState Driver
 
-A [Cycle.js](http://cycle.js.org) [driver](http://cycle.js.org/drivers.html) for navigation.
+A [Cycle.js](http://cycle.js.org) [driver](http://cycle.js.org/drivers.html) for the history PushState API.
 
 ## API
 
 ### ```makePushStateDriver ()```
 
-Returns a navigation driver that calls ```history.pushState``` on the input paths and outputs paths sent to ```pushState``` as well as received with ```popstate``` events, starting with the current path.
-
-### ```makeHashChangeDriver ()```
-
-Returns a navigation driver that sets ```location.hash``` to the input hashes and outputs hashes received with ```hashchange``` events, starting with the current hash.
-
-### ```makeNavigationDriver ()```
-
-Returns the pushState driver if ```history.pushState``` is available, otherwise returns the hashchange Driver.
+Returns a navigation driver that calls ```history.pushState``` on the input paths and outputs paths sent to ```pushState``` as well as received with ```popstate``` events, starting with the current path. If pushState is not supported, this function returns a driver that simply emits the current path.
 
 ## Install
 
@@ -27,14 +19,14 @@ Basics:
 
 ```js
 import Cycle from '@cycle/core'
-import { makeNavigationDriver } from 'cycle-navigation-driver'
+import { makePushStateDriver } from 'cycle-pushstate-driver'
 
 function main (responses) {
   // ...
 }
 
 const drivers = {
-  Navigation: makeNavigationDriver()
+  Path: makePushStateDriver()
 }
 
 Cycle.run(main, drivers)
@@ -50,7 +42,7 @@ function main(responses) {
   let navigate$ = localLinkClick$
     .map(e => e.currentTarget.href)
 
-  let vtree$ = responses.Navigation
+  let vtree$ = responses.Path
     .map(url => {
       switch(url) {
         case '/':
@@ -67,7 +59,7 @@ function main(responses) {
 
   return {
     DOM: vtree$,
-    Navigation: navigate$,
+    Path: navigate$,
     preventDefault: localLinkClick$
   };
 }
@@ -90,26 +82,14 @@ function main(responses) {
   let navigate$ = localLinkClick$
     .map(e => e.currentTarget.href)
 
-  let vtree$ = responses.Navigation
+  let vtree$ = responses.Path
     .map(resolve)
     .map(({ value }) => value)
 
   return {
     DOM: vtree$,
-    Navigation: navigate$,
+    Path: navigate$,
     preventDefault: localLinkClick$
   };
 }
 ```
-
-## Roadmap
-
-### v0.x
- - Add tests
- - Handle errors
- - Support hash changes
- - Use cycle eslint config
-
-### v1.x
- - Move to cycle.js org
- - Publish on npm
