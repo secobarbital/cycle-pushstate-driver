@@ -11,7 +11,8 @@ Returns a navigation driver that calls ```history.pushState``` on the input path
 
 ## Install
 
-Only available via git for now. I will publish this module on npm once I have added tests.
+```sh
+npm install cycle-pushstate-driver
 
 ## Usage
 
