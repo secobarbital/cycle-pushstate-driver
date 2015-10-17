@@ -7,7 +7,7 @@ A [Cycle.js](http://cycle.js.org) [driver](http://cycle.js.org/drivers.html) for
 
 This is a very minimal Cycle.js driver that simply isolates ```history.pushState``` calls and  ```popstate``` events. It makes no assumption about how you want to filter and transform click/touch event streams to come up with the paths to push. Nor will it do ```e.preventDefault()``` for you.
 
-Finally, in the absence of ``pushState`` support it does not try to use ````hashchange``` but instead lets the links work as normal links. This means that your ```preventDefault``` driver needs to know not to capture these click/touch events.
+Finally, in the absence of ``pushState`` support it does not try to use ```hashchange``` but instead lets the links work as normal links. This means that your ```preventDefault``` driver needs to know not to capture these click/touch events.
 
 If you prefer a driver that covers all these cases, you may want to consider the [```TylorS/cycle-history```](https://github.com/TylorS/cycle-history) driver which is a batteries-included approach to the same problem.
 
