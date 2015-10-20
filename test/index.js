@@ -1,6 +1,6 @@
 import test from 'tape'
 import sinon from 'sinon'
-import { Rx } from '@cycle/core'
+import Rx from 'rx'
 import { makePushStateDriver } from '../src'
 
 function setupListeners () {
